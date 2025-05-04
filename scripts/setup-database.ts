@@ -9,7 +9,7 @@ async function main() {
 
     // Step 1: Push the schema to the database
     console.log("📊 Pushing Prisma schema to database...")
-    execSync("npx prisma db push", { stdio: "inherit" })
+    execSync("pnpm exec prisma db push", { stdio: "inherit" })
     console.log("✅ Schema pushed successfully!")
 
     // Step 2: Verify connection and tables

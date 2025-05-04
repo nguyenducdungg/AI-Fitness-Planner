@@ -6,11 +6,11 @@ async function main() {
 
     // Step 1: Set up the database schema
     console.log("\n📊 Setting up database schema...")
-    execSync("npm run setup-db", { stdio: "inherit" })
+    execSync("pnpm run setup-db", { stdio: "inherit" })
 
     // Step 2: Seed the database with initial data
     console.log("\n🌱 Seeding database with initial data...")
-    execSync("npm run seed-db", { stdio: "inherit" })
+    execSync("pnpm run seed-db", { stdio: "inherit" })
 
     console.log("\n✅ Database initialization completed successfully!")
   } catch (error) {
