@@ -1,16 +1,30 @@
 import { PrismaClient } from "@prisma/client"
 
+// Check if we're in a production environment
+const isProd = process.env.NODE_ENV === "production"
+
+// Prevent multiple instances of Prisma Client in development
 const globalForPrisma = global as unknown as { prisma: PrismaClient }
 
+// Initialize Prisma Client
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    log: isProd ? ["error"] : ["query", "error", "warn"],
+    errorFormat: "pretty",
   })
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+// If not in production, attach prisma to the global object
+if (!isProd) globalForPrisma.prisma = prisma
 
-// Ensure Prisma Client is properly initialized before exporting
-// This helps prevent issues during hot reloading in development
-// and during serverless function cold starts in production
+// Handle potential connection issues
+prisma
+  .$connect()
+  .then(() => {
+    if (!isProd) console.log("🚀 Prisma connected successfully")
+  })
+  .catch((e) => {
+    console.error("❌ Failed to connect to database", e)
+  })
+
 export default prisma

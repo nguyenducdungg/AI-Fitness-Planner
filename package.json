@@ -68,8 +68,8 @@
     "ai": "latest",
     "@ai-sdk/openai": "latest",
     "@supabase/supabase-js": "latest",
-    "superjson": "latest",
     "@trpc/react-query": "latest",
+    "superjson": "latest",
     "child_process": "latest",
     "@prisma/client": "latest"
   },

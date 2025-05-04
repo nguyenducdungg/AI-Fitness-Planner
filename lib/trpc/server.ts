@@ -3,15 +3,26 @@ import { getServerSession } from "next-auth"
 import superjson from "superjson"
 import { ZodError } from "zod"
 
+// Add this at the top of the file, after the imports
 import { prisma } from "@/lib/prisma"
 
+// Make sure the createTRPCContext function properly handles potential connection issues
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await getServerSession()
+  try {
+    const session = await getServerSession()
 
-  return {
-    prisma,
-    session,
-    ...opts,
+    return {
+      prisma,
+      session,
+      ...opts,
+    }
+  } catch (error) {
+    console.error("Error creating TRPC context:", error)
+    return {
+      prisma,
+      session: null,
+      ...opts,
+    }
   }
 }
 
