@@ -60,18 +60,18 @@
     "zod": "latest",
     "@auth/core": "latest",
     "nodemailer": "latest",
-    "prisma": "latest",
     "@tanstack/react-query": "latest",
     "@trpc/client": "latest",
     "@trpc/server": "latest",
+    "prisma": "latest",
     "next-auth": "latest",
     "ai": "latest",
     "@ai-sdk/openai": "latest",
     "@supabase/supabase-js": "latest",
-    "@prisma/client": "latest",
     "superjson": "latest",
     "@trpc/react-query": "latest",
-    "child_process": "latest"
+    "child_process": "latest",
+    "@prisma/client": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

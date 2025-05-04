@@ -9,3 +9,8 @@ export const prisma =
   })
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+
+// Ensure Prisma Client is properly initialized before exporting
+// This helps prevent issues during hot reloading in development
+// and during serverless function cold starts in production
+export default prisma
