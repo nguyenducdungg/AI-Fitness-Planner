@@ -1,0 +1,76 @@
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dumbbell, Loader2 } from "lucide-react"
+import { api } from "@/lib/trpc/client"
+import { useToast } from "@/components/ui/use-toast"
+import { useRouter } from "next/navigation"
+
+export function WorkoutGenerator() {
+  const [isGenerating, setIsGenerating] = useState(false)
+  const { toast } = useToast()
+  const router = useRouter()
+
+  const generateWorkout = api.workout.generateWorkoutPlan.useMutation({
+    onSuccess: (data) => {
+      toast({
+        title: "Workout Plan Generated",
+        description: "Your personalized workout plan has been created successfully.",
+      })
+      router.push("/workouts")
+      router.refresh()
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to generate workout plan. Please try again.",
+        variant: "destructive",
+      })
+    },
+    onSettled: () => {
+      setIsGenerating(false)
+    },
+  })
+
+  const handleGenerateWorkout = async () => {
+    setIsGenerating(true)
+    generateWorkout.mutate()
+  }
+
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Generate AI Workout Plan</CardTitle>
+        <CardDescription>Create a personalized workout plan based on your profile and fitness goals</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col items-center justify-center p-6 space-y-4 text-center">
+          <div className="p-3 rounded-full bg-primary/10">
+            <Dumbbell className="h-10 w-10 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-xl font-medium">AI-Powered Workout Planning</h3>
+            <p className="text-sm text-muted-foreground mt-2">
+              Our AI will analyze your profile, fitness goals, and preferences to create a customized workout plan
+              tailored specifically for you.
+            </p>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-center">
+        <Button size="lg" onClick={handleGenerateWorkout} disabled={isGenerating}>
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating Plan...
+            </>
+          ) : (
+            "Generate Workout Plan"
+          )}
+        </Button>
+      </CardFooter>
+    </Card>
+  )
+}

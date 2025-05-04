@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile         UserProfile?
+  fitnessGoals    FitnessGoal?
+  workoutPlans    WorkoutPlan[]
+  nutritionPlans  NutritionPlan[]
+  progressRecords ProgressRecord[]
+  workoutLogs     WorkoutLog[]
+  nutritionLogs   NutritionLog[]
+  notifications   Notification[]
+}
+
+model UserProfile {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  age               Int
+  gender            String
+  height            Float
+  weight            Float
+  medicalConditions String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FitnessGoal {
+  id                 String   @id @default(uuid())
+  userId             String   @unique
+  primaryGoal        String
+  experienceLevel    String
+  targetWeight       Float
+  timeframe          String
+  workoutDaysPerWeek Int
+  workoutDuration    Int
+  additionalGoals    String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WorkoutPlan {
+  id        String   @id @default(uuid())
+  userId    String
+  planData  Json
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutLogs WorkoutLog[]
+}
+
+model NutritionPlan {
+  id                String   @id @default(uuid())
+  userId           String
+  dailyCalories    Int
+  macroDistribution Json
+  mealPlan         Json
+  recommendations  Json
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nutritionLogs NutritionLog[]
+}
+
+model ProgressRecord {
+  id          String   @id @default(uuid())
+  userId      String
+  recordType  String
+  recordValue Float
+  recordDate  DateTime
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WorkoutLog {
+  id             String    @id @default(uuid())
+  userId         String
+  workoutPlanId  String
+  workoutDay     String
+  completed      Boolean   @default(false)
+  completionDate DateTime?
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workoutPlan WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
+}
+
+model NutritionLog {
+  id                String   @id @default(uuid())
+  userId            String
+  nutritionPlanId   String
+  logDate           DateTime
+  adherenceScore    Int
+  caloriesConsumed  Int
+  proteinConsumed   Int
+  carbsConsumed     Int
+  fatConsumed       Int
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nutritionPlan NutritionPlan @relation(fields: [nutritionPlanId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id               String   @id @default(uuid())
+  userId           String
+  title            String
+  message          String
+  notificationType String
+  isRead           Boolean  @default(false)
+  scheduledFor     DateTime
+  createdAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
